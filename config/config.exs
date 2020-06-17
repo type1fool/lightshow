@@ -27,7 +27,7 @@ config :blinkchain, :channel0,
   pin: 18,
   type: :grb,
   brightness: 32,
-  gamma: gamma
+  gamma: gamma,
   arrangement: [
     %{
       type: :strip,
