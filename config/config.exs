@@ -19,8 +19,12 @@ gamma = [
 215, 218, 220, 223, 225, 228, 231, 233, 236, 239, 241, 244, 247, 249, 252, 255
 ]
 
+led_count = 60
+
+config :lightshow, led_count: led_count
+
 config :blinkchain,
-  canvas: {60, 1},
+  canvas: {led_count, 1},
   dma_channel: 5
 
 config :blinkchain, :channel1,
@@ -32,7 +36,7 @@ config :blinkchain, :channel1,
     %{
       type: :strip,
       origin: {0, 0},
-      count: 60,
+      count: led_count,
       direction: :right
     }
   ]
@@ -44,7 +48,8 @@ config :vintage_net,
      %{
        type: VintageNetEthernet,
        ipv4: %{method: :dhcp}
-     }},
+     }
+    },
     {"wlan0",
       %{
         type: VintageNetWiFi,
