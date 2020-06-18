@@ -20,11 +20,11 @@ gamma = [
 ]
 
 config :blinkchain,
-  canvas: {60,1},
+  canvas: {60, 1},
   dma_channel: 5
 
-config :blinkchain, :channel0,
-  pin: 18,
+config :blinkchain, :channel1,
+  pin: 13,
   type: :grb,
   brightness: 32,
   gamma: gamma,
@@ -38,21 +38,22 @@ config :blinkchain, :channel0,
   ]
 
 config :vintage_net,
-  regulatory_domain: "US",
   config: [
-    {"wlan0", %{
-      type: VintageNetWiFi,
-      vintage_net_wifi: %{
-        networks: [
-          %{
-            key_mgmt: :wpa_psk,
-            ssid: System.get_env("WIFI_SSID"),
-            psk: System.get_env("WIFI_PASS"),
-          }
-        ]
-      },
-      ipv4: %{method: :dhcp}
-    }}
+    {"wlan0",
+      %{
+        type: VintageNetWiFi,
+        vintage_net_wifi: %{
+          networks: [
+            %{
+              key_mgmt: :wpa_psk,
+              ssid: System.get_env("WIFI_SSID"),
+              psk: System.get_env("WIFI_PASS"),
+            }
+          ]
+        },
+        ipv4: %{method: :dhcp},
+      }
+    }
   ]
 
 config :lightshow, target: Mix.target()
