@@ -3,10 +3,7 @@ defmodule Lightshow.Worker do
 
   alias Blinkchain.{Color, Point}
 
-  defp led_count do
-    channel = Application.get_env(:blinkchain, :channel1, %{arrangement: %{count: 60}})
-    channel.arrangement.count
-  end
+  defp led_count, do: Application.get_env(:lightshow, :led_count, 60)
 
   defmodule State do
     defstruct [:timer, :colors, :iteration]
