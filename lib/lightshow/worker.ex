@@ -1,4 +1,7 @@
 defmodule Lightshow.Worker do
+  @moduledoc """
+  Rainbow cycle based on https://learn.adafruit.com/adafruit-neopixel-uberguide/python-circuitpython
+  """
   use GenServer
 
   alias Blinkchain.{Color, Point}
@@ -6,7 +9,7 @@ defmodule Lightshow.Worker do
   defp led_count, do: Application.get_env(:lightshow, :led_count, 60)
 
   defmodule State do
-    defstruct [:timer, :colors, :iteration]
+    defstruct [:timer]
   end
 
   def start_link(opts \\ []) do
@@ -14,52 +17,56 @@ defmodule Lightshow.Worker do
   end
 
   def init(_opts) do
-    {:ok, ref} = :timer.send_interval(250, :draw_frame)
+    {:ok, ref} = :timer.send_interval(33, :draw_frame)
 
     state = %State{
       timer: ref,
-      iteration: 0,
-      colors: Lightshow.Colors.colors()
     }
 
     {:ok, state}
   end
 
   def handle_info(:draw_frame, state) do
-    for point <- 0..led_count() do
-      Blinkchain.set_pixel(%Point{x: point, y: 0}, %Color{
-        g: point + state.iteration,
-        r: point + state.iteration * 2,
-        b: point + state.iteration * 3,
-      })
+    for hue <- 0..255 do
+      for point <- 0..led_count() do
+        Blinkchain.set_pixel(
+          %Point{x: point, y: 0},
+          wheel((point * 256) + hue)
+        )
+      end
     end
 
     Blinkchain.render()
-    {:noreply, %State{state | iteration: set_iteration(state.iteration) }}
+    {:noreply, state}
   end
 
-  defp set_iteration(iteration) do
-    if iteration > 255 do
-      0
-    else
-      iteration
-    end
+  defp wheel(pos) when pos < 0 or pos > 255 do
+    %Color{g: 0, r: 0, b: 0}
   end
 
-  # def handle_info(:draw_frame, state) do
-  #   [c1, c2, c3, c4, c5] = Enum.slice(state.colors, 0..4)
+  defp wheel(pos) when pos < 85 do
+    %Color{
+      g: 255 - pos * 3,
+      r: pos * 3,
+      b: 0
+    }
+  end
 
-  #   tail = Enum.slice(state.colors, 1..-1)
+  defp wheel(pos) when pos < 170 do
+    pos = pos - 85
+    %Color{
+      g: 0,
+      r: 255 - pos * 3,
+      b: pos * 3
+    }
+  end
 
-  #   Blinkchain.copy(%Point{x: 0, y: 0}, %Point{x: 1, y: 0}, 7, 5)
-
-  #   Blinkchain.set_pixel(%Point{x: 0, y: 0}, c1)
-  #   Blinkchain.set_pixel(%Point{x: 1, y: 0}, c2)
-  #   Blinkchain.set_pixel(%Point{x: 2, y: 0}, c3)
-  #   Blinkchain.set_pixel(%Point{x: 3, y: 0}, c4)
-  #   Blinkchain.set_pixel(%Point{x: 4, y: 0}, c5)
-
-  #   Blinkchain.render()
-  #   {:noreply, %State{state | colors: tail ++ [c1]}}
-  # end
+  defp wheel(pos) do
+    pos = pos - 170
+    %Color{
+      g: 255 - pos * 3,
+      r: 0,
+      b: 255 - pos * 3
+    }
+  end
 end
