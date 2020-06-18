@@ -31,7 +31,9 @@ defmodule Lightshow.Worker do
       for point <- 0..led_count() do
         Blinkchain.set_pixel(
           %Point{x: point, y: 0},
-          wheel((point * 256) + hue)
+          wheel(
+            Bitwise.band((point * 256) + hue, 255)
+          )
         )
       end
     end
