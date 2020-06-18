@@ -9,7 +9,7 @@ defmodule Lightshow.Worker do
   defp led_count, do: Application.get_env(:lightshow, :led_count, 60)
 
   defmodule State do
-    defstruct [:timer]
+    defstruct [:timer, :status]
   end
 
   def start_link(opts \\ []) do
@@ -21,6 +21,7 @@ defmodule Lightshow.Worker do
 
     state = %State{
       timer: ref,
+      status: :ok
     }
 
     {:ok, state}
@@ -38,8 +39,8 @@ defmodule Lightshow.Worker do
       end
     end
 
-    Blinkchain.render()
-    {:noreply, state}
+    status = Blinkchain.render()
+    {:noreply, %State{state | status: status}}
   end
 
   defp wheel(pos) when pos < 0 or pos > 255 do
