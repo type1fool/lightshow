@@ -27,8 +27,8 @@ config :blinkchain,
   canvas: {led_count, 1},
   dma_channel: 5
 
-config :blinkchain, :channel1,
-  pin: 13,
+config :blinkchain, :channel0,
+  pin: 18,
   type: :grb,
   brightness: 32,
   gamma: gamma,
