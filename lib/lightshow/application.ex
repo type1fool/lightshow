@@ -33,6 +33,7 @@ defmodule Lightshow.Application do
       # Children for all targets except host
       # Starts a worker by calling: Lightshow.Worker.start_link(arg)
       # {Lightshow.Worker, arg},
+      Lightshow.Worker
     ]
   end
 
