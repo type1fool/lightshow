@@ -37,20 +37,6 @@ if keys == [],
 config :nerves_firmware_ssh,
   authorized_keys: Enum.map(keys, &File.read!/1)
 
-# Configure the network using vintage_net
-# See https://github.com/nerves-networking/vintage_net for more information
-config :vintage_net,
-  regulatory_domain: "US",
-  config: [
-    {"usb0", %{type: VintageNetDirect}},
-    {"eth0",
-     %{
-       type: VintageNetEthernet,
-       ipv4: %{method: :dhcp}
-     }},
-    {"wlan0", %{type: VintageNetWiFi}}
-  ]
-
 config :mdns_lite,
   # The `host` key specifies what hostnames mdns_lite advertises.  `:hostname`
   # advertises the device's hostname.local. For the official Nerves systems, this
