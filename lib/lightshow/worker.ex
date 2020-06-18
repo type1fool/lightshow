@@ -17,7 +17,7 @@ defmodule Lightshow.Worker do
   end
 
   def init(_opts) do
-    {:ok, ref} = :timer.send_interval(33, :chaser_sequence)
+    {:ok, ref} = :timer.send_interval(33, :twinkle)
 
     state = %State{
       timer: ref,
@@ -51,13 +51,49 @@ defmodule Lightshow.Worker do
     {:noreply, state}
   end
 
+  def handle_info(:twinkle, state) do
+    Blinkchain.fill(%Point{x: 0, y: 0}, led_count(), 1, %Color{
+      g: 0,
+      r: 0,
+      b: 0,
+    })
+
+    Blinkchain.set_pixel(%Point{x: random_int(), y: 0}, %Color{
+      g: random_int(),
+      r: random_int(),
+      b: random_int(),
+    })
+
+    Blinkchain.set_pixel(%Point{x: random_int(), y: 0}, %Color{
+      g: random_int(),
+      r: random_int(),
+      b: random_int(),
+    })
+
+    Blinkchain.set_pixel(%Point{x: random_int(), y: 0}, %Color{
+      g: random_int(),
+      r: random_int(),
+      b: random_int(),
+    })
+
+    Blinkchain.set_pixel(%Point{x: random_int(), y: 0}, %Color{
+      g: random_int(),
+      r: random_int(),
+      b: random_int(),
+    })
+
+    Blinkchain.render()
+    {:noreply, state}
+  end
+
   def handle_info(:rainbow_cycle, state) do
-    for hue <- 0..255 do
+    for int <- 0..255 do
       for point <- 0..led_count() do
+        pixel_index = (point * 256 / led_count()) + int
         Blinkchain.set_pixel(
           %Point{x: point, y: 0},
           wheel(
-            Bitwise.band((point * 256) + hue, 255)
+            Bitwise.band(pixel_index, 255)
           )
         )
       end
@@ -65,6 +101,11 @@ defmodule Lightshow.Worker do
 
     status = Blinkchain.render()
     {:noreply, %State{state | status: status}}
+  end
+
+  defp random_led do
+    0..led_count()
+    |> Enum.random()
   end
 
   defp random_int do
@@ -96,7 +137,7 @@ defmodule Lightshow.Worker do
   defp wheel(pos) do
     pos = pos - 170
     %Color{
-      g: 255 - pos * 3,
+      g: pos * 3,
       r: 0,
       b: 255 - pos * 3
     }
