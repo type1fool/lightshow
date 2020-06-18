@@ -25,7 +25,7 @@ config :lightshow, led_count: led_count
 
 config :blinkchain,
   canvas: {led_count, 1},
-  dma_channel: 5
+  dma_channel: 10
 
 config :blinkchain, :channel0,
   pin: 18,
