@@ -11,7 +11,7 @@ defmodule Lightshow.Worker do
   @rainbow_colors Colors.rainbow(@led_count)
 
   defmodule State do
-    defstruct [:timer, :lit_led, :current_color]
+    defstruct [:timer, :lit_led]
   end
 
   def start_link(opts \\ []) do
@@ -26,8 +26,7 @@ defmodule Lightshow.Worker do
 
     state = %State{
       timer: ref,
-      lit_led: 0,
-      current_color: %Color{g: 0, r: 0, b: 0},
+      lit_led: 0
     }
 
     {:ok, state}
@@ -101,13 +100,13 @@ defmodule Lightshow.Worker do
   end
 
   def test_leds do
-    Blinkchain.fill({0,0}, @led_count, 1, {255,0,0})
+    Blinkchain.fill({0, 0}, @led_count, 1, {255, 0, 0})
     Blinkchain.render()
     :timer.sleep(500)
-    Blinkchain.fill({0,0}, @led_count, 1, {0,255,0})
+    Blinkchain.fill({0, 0}, @led_count, 1, {0, 255, 0})
     Blinkchain.render()
     :timer.sleep(500)
-    Blinkchain.fill({0,0}, @led_count, 1, {0,0,255})
+    Blinkchain.fill({0, 0}, @led_count, 1, {0, 0, 255})
     Blinkchain.render()
     :timer.sleep(500)
   end
@@ -117,6 +116,7 @@ defmodule Lightshow.Worker do
       selected_color = Enum.at(@rainbow_colors, i, %Color{g: 0, r: 0, b: 0})
       Blinkchain.set_pixel(%Point{x: i, y: 0}, selected_color)
     end
+
     Blinkchain.render()
   end
 
