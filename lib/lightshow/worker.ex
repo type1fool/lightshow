@@ -27,15 +27,15 @@ defmodule Lightshow.Worker do
     state = %State{
       timer: ref,
       lit_led: 0,
-      current_color: %Color{g: 0, r: 0, b: 0}
+      current_color: %Color{g: 0, r: 0, b: 0},
     }
 
     {:ok, state}
   end
 
   def handle_info(:shift_pixels, state) do
-    Blinkchain.copy({@led_count, 0}, {0, 0}, 0, 1)
-    Blinkchain.copy({1, 0}, {2, 0}, @led_count - 1, 1)
+    Blinkchain.copy({@led_count - 1, 0}, {0, 0}, 1, 1)
+    Blinkchain.copy({0, 0}, {1, 0}, @led_count - 1, 1)
     Blinkchain.render()
     {:noreply, state}
   end
